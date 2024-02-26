@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Users List</title>
+</head>
+<body>
+    <h1>Active Users List</h1>
+    <ul>
+        <% Object.keys(active_users).forEach(id => { %>
+            <li>ID: <%= id %>, Name: <%= active_users[id] %>
+                <button onclick="redirectToDetails('<%= id %>')">Details</button>
+            </li>
+        <% }); %>
+    </ul>
+
+    <script>
+        function redirectToDetails(id) {
+            // Redirect to the details page with the user's ID as a parameter
+            window.open (`http://localhost:7777/display-detail?id=${id}`,'_blank');
+        }
+    </script>
+</body>
+</html>
