@@ -14,6 +14,9 @@
     background: #e8fcd4;
     text-align: center;
 }
+a{
+    color: blue;
+}
     </style>
 </head>
 <body>
@@ -21,8 +24,8 @@
     <h1>Active Users List</h1>
     <ul>
         <% Object.keys(active_users).forEach(id => { %>
-            <li>ID: <%= id %>, Name: <%= active_users[id] %>
-                <button onclick="redirectToDetails('<%= id %>')">Details</button>
+            <li>ID: <a onclick="redirectToDetails('<%= id %>')"><%= id %> </a> Name: <%= active_users[id] %>
+                <!-- <button onclick="redirectToDetails('<%= id %>')">Details</button>   -->
             </li>
         <% }); %>
     </ul>
