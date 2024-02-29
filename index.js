@@ -20,6 +20,7 @@ const { Server } = require("socket.io");
 const server = createServer(app);
 const io = new Server(server);
 
+// const bodyParser = require('body-parser');
 app.use(express.static(path.join(__dirname, "public")));
 mongoose.connect(uri); // connecting MONGO DB
 app.use(bodyParser.json()); // Add body-parser middleware for parsing JSON data
@@ -190,6 +191,28 @@ io.on("connection", (socket) => {
     console.log(active_users);
   });
 
+  socket.on("fetch-data", async (id) => {
+    console.log("Got data", id);
+
+    const userId = id;
+    console.log("Line 199", userId);
+    try {
+      // Fetch user details from MongoDB using Mongoose
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        console.log("User not found");
+        socket.emit("user-not-found", userId); // Emit an event indicating that user is not found
+        return; // Exit the function if user is not found
+      }
+      // Log the user details
+      console.log("User found:", user);
+      socket.emit("user-details", user); // Emit user details back to the client
+    } catch (err) {
+      console.error("Error fetching user details:", err);
+      // Handle the error appropriately
+    }
+  });
+
   socket.on("disconnect", () => {
     if (active_users.hasOwnProperty(new_user_id)) {
       delete active_users[new_user_id];
@@ -205,7 +228,8 @@ app.get("/new-page", (req, res) => {
 });
 
 app.get("/display-detail", async (req, res) => {
-  const userId = req.query.id; // Get user ID from the query parameter
+  const userId = req.body;
+  console.log("line 215", userId);
   try {
     // Fetch user details from MongoDB using Mongoose
     const user = await UserModel.findById(userId);
@@ -213,7 +237,7 @@ app.get("/display-detail", async (req, res) => {
       return res.status(404).send("User not found");
     }
     // res.json(user);
-    res.render("display_detail", { user }); // Send user details as JSON response
+    res.json(user); // Send user details as JSON response
   } catch (err) {
     console.error("Error fetching user details:", err);
     res.status(500).send("Internal Server Error");
